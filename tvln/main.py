@@ -4,11 +4,23 @@
 import torch
 
 
+def cleanup(model, device: str):
+    import torch
+    import gc
+
+    if device != "cpu":
+        gpu = getattr(torch, device)
+        gpu.empty_cache()
+    model = None
+    del model
+    gc.collect()
+
+
 @torch.no_grad
 def main():
     import os
     from tvln.clip_features import CLIPFeatures, DeviceName, PrecisionType, ModelLink, ModelType
-    from tvln.gather import ImageFile
+    from tvln.batch import ImageFile
     from huggingface_hub import snapshot_download
     from diffusers import AutoencoderKL
 
@@ -22,15 +34,15 @@ def main():
         device = DeviceName.MPS
         precision = PrecisionType.FP32
 
-    gather = ImageFile()
-    gather.single_image()
-    gather.as_tensor(dtype=torch.float32, device=text_device)
+    image_file = ImageFile()
+    image_file.single_image()
+    image_file.as_tensor(dtype=torch.float32, device=text_device)
 
     feature_extractor = CLIPFeatures()
     feature_extractor.set_device(text_device)
     feature_extractor.set_precision(precision)
     feature_extractor.set_model_link(ModelLink.VIT_L_14_LAION2B_S32B_B82K)  # type: ignore
-    clip_l_tensor = feature_extractor.extract(gather)
+    clip_l_tensor = feature_extractor.extract(image_file)
     clip_l_data = vars(feature_extractor)
     cleanup(model=feature_extractor, device=text_device)
 
@@ -38,7 +50,7 @@ def main():
     feature_extractor.set_device(text_device)
     feature_extractor.set_precision(precision)
     feature_extractor.set_model_type(ModelType.VIT_L_14_LAION400M_E32)
-    clip_l_e32_tensor = feature_extractor.extract(gather, last_layer=True)
+    clip_l_e32_tensor = feature_extractor.extract(image_file, last_layer=True)
     clip_l_e32_data = vars(feature_extractor)
     cleanup(model=feature_extractor, device=text_device)
 
@@ -46,16 +58,16 @@ def main():
     feature_extractor.set_device(text_device)
     feature_extractor.set_precision(precision)
     feature_extractor.set_model_link(ModelLink.VIT_BIGG_14_LAION2B_S39B_B160K)
-    clip_g_tensor = feature_extractor.extract(gather)
+    clip_g_tensor = feature_extractor.extract(image_file)
     clip_g_data = vars(feature_extractor)
     cleanup(model=feature_extractor, device=text_device)
 
     vae_path = snapshot_download("black-forest-labs/FLUX.1-dev", allow_patterns=["vae/*"])
     vae_path = os.path.join(vae_path, "vae")
 
-    gather.as_tensor(dtype=dtype, device=device)
+    image_file.as_tensor(dtype=dtype, device=device)
     vae_model = AutoencoderKL.from_pretrained(vae_path, torch_dtype=dtype).to(device)
-    vae_tensor = vae_model.tiled_encode(gather.tensor, return_dict=False)
+    vae_tensor = vae_model.tiled_encode(image_file.tensor, return_dict=False)
 
     aggregate_data = {
         "CLIP_L_S32B82K": [clip_l_data, clip_l_tensor],

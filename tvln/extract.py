@@ -11,17 +11,6 @@ class FeatureExtractor:
         self.text_device = text_device
         self.precision = precision
 
-    def cleanup(self, model, device: str):
-        import torch
-        import gc
-
-        if device != "cpu":
-            gpu = getattr(torch, device)
-            gpu.empty_cache()
-        model = None
-        del model
-        gc.collect()
-
     def extract_features(self, model_info: Enum, image_file: ImageFile, last_layer: bool = False):
         feature_extractor = CLIPFeatures()
         feature_extractor.set_device(self.text_device)

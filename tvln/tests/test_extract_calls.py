@@ -5,7 +5,7 @@ from unittest.mock import patch, MagicMock
 from tefln.main import CLIPFeatures, cleanup, ModelLink, ModelType
 
 @pytest.fixture
-def dummy_gather():
+def dummy_image_file():
     return {"text": ["a"], "image": ["b"]}
 
 @patch("tefln.main.cleanup")
@@ -15,7 +15,7 @@ def dummy_gather():
 @patch.object(CLIPFeatures, "set_precision")
 @patch.object(CLIPFeatures, "set_device")
 def test_clip_features_flow(
-    mock_dev, mock_prec, mock_type, mock_link, mock_extract, mock_cleanup, dummy_gather
+    mock_dev, mock_prec, mock_type, mock_link, mock_extract, mock_cleanup, dummy_image_file
 ):
     # run the three blocks (copy‑paste the original snippet here)
     # block 1
@@ -23,7 +23,7 @@ def test_clip_features_flow(
     f.set_device("cpu")
     f.set_precision("fp16")
     f.set_model_link(ModelLink.VIT_L_14_LAION2B_S32B_B82K)
-    t1 = f.extract(dummy_gather)
+    t1 = f.extract(dummy_image_file)
     cleanup(model=f, device="cpu")
 
     # block 2
@@ -31,7 +31,7 @@ def test_clip_features_flow(
     f.set_device("cpu")
     f.set_precision("fp16")
     f.set_model_type(ModelType.VIT_L_14_LAION400M_E32)
-    t2 = f.extract(dummy_gather, last_layer=True)
+    t2 = f.extract(dummy_image_file, last_layer=True)
     cleanup(model=f, device="cpu")
 
     # block 3
@@ -39,7 +39,7 @@ def test_clip_features_flow(
     f.set_device("cpu")
     f.set_precision("fp16")
     f.set_model_link(ModelLink.VIT_BIGG_14_LAION2B_S39B_B160K)
-    t3 = f.extract(dummy_gather)
+    t3 = f.extract(dummy_image_file)
     cleanup(model=f, device="cpu")
 
     # assertions
