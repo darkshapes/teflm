@@ -19,7 +19,7 @@ def cleanup(model, device: str):
 @torch.no_grad
 def main():
     import os
-    from teflm.clip_features import CLIPFeatures, DeviceName, PrecisionType, ModelLink
+    from teflm.clip_features import CLIPFeatures, DeviceName, PrecisionType, ModelLink, ModelType
     from teflm.gather import Gather
     from huggingface_hub import snapshot_download
     from diffusers import AutoencoderKL
@@ -49,8 +49,8 @@ def main():
     feature_extractor = CLIPFeatures()
     feature_extractor.set_device(text_device)
     feature_extractor.set_precision(precision)
-    feature_extractor.set_model_type(ModelLink.VIT_L_14_LAION400M_E32)
-    clip_l_e32_tensor = feature_extractor.extract(gather)
+    feature_extractor.set_model_type(ModelType.VIT_L_14_LAION400M_E32)
+    clip_l_e32_tensor = feature_extractor.extract(gather, last_layer=True)
     clip_l_e32_data = vars(feature_extractor)
     cleanup(model=feature_extractor, device=text_device)
 
