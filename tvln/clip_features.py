@@ -194,3 +194,15 @@ class CLIPFeatures:
         else:
             self._images = [image._image_path]
             return self.ImageEncoder()
+
+
+def cleanup(model: CLIPFeatures, device: str) -> None:  # type:ignore
+    import torch
+    import gc
+
+    if device != "cpu":
+        gpu = getattr(torch, device)
+        gpu.empty_cache()
+    model: None = None
+    del model
+    gc.collect()

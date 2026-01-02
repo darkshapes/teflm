@@ -4,22 +4,10 @@
 import torch
 
 
-def cleanup(model, device: str):
-    import torch
-    import gc
-
-    if device != "cpu":
-        gpu = getattr(torch, device)
-        gpu.empty_cache()
-    model = None
-    del model
-    gc.collect()
-
-
 @torch.no_grad
 def main():
     import os
-    from tvln.clip_features import CLIPFeatures, DeviceName, PrecisionType, ModelLink, ModelType
+    from tvln.clip_features import CLIPFeatures, DeviceName, PrecisionType, ModelLink, ModelType, cleanup
     from tvln.batch import ImageFile
     from huggingface_hub import snapshot_download
     from diffusers import AutoencoderKL
@@ -76,6 +64,7 @@ def main():
         "F1 VAE": ["black-forest-labs/FLUX.1-dev", vae_tensor[0].sample()],
     }
     print(aggregate_data)
+    return aggregate_data
 
 
 if __name__ == "__main__":
