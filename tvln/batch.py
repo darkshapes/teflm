@@ -33,7 +33,7 @@ class ImageFile:
         if not isinstance(self._image_path, str):
             raise TypeError(f"Expected a string or list of strings for `image_paths` {self._image_path}, got {type(self._image_path)} ")
 
-    def as_tensor(self, dtype: torch.dtype, device: torch.device, normalize: bool = False) -> None:
+    def as_tensor(self, dtype: torch.dtype, device: str, normalize: bool = False) -> None:
         """Convert a Pillow `Image` to a batched `torch.Tensor`\n
         :param image: Pillow image (RGB) to encode.
         :param device: Target device for the tensor (default: ``gpu.device``).
@@ -51,3 +51,7 @@ class ImageFile:
             if normalize:
                 tensor = tensor * 2.0 - 1.0
             self.tensor = tensor
+
+    @property
+    def image_path(self) -> str:
+        return self._image_path

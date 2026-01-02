@@ -3,8 +3,8 @@
 
 import pytest
 from unittest.mock import patch, MagicMock
-
 from tvln.clip_features import CLIPFeatures
+from tvln.extract import FeatureExtractor
 
 
 @pytest.fixture
@@ -12,7 +12,7 @@ def dummy_image_file():
     return {"text": ["a"], "image": ["b"]}
 
 
-@patch("tvln.clip_features.cleanup")
+@patch.object(FeatureExtractor, "cleanup")
 @patch.object(CLIPFeatures, "extract", return_value=MagicMock(name="tensor"))
 @patch.object(CLIPFeatures, "set_model_link")
 @patch.object(CLIPFeatures, "set_model_type")
