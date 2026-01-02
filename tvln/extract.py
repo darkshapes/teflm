@@ -37,7 +37,6 @@ class FeatureExtractor:
             clip_extractor.set_model_link(model_info)
         elif isinstance(model_info, ModelType):
             clip_extractor.set_model_type(model_info)
-        print(clip_extractor._precision)
         tensor = clip_extractor.extract(self.image_file, last_layer)
         data = vars(clip_extractor)
         self.cleanup(model=clip_extractor)

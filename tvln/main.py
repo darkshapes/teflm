@@ -25,11 +25,8 @@ def main():
     image_file.single_image()
 
     feature_extractor = FeatureExtractor(text_device, precision=precision, image_file=image_file)
-    print(feature_extractor.precision)
     clip_l_tensor, clip_l_data = feature_extractor.extract_features(model_info=ModelLink.VIT_L_14_LAION2B_S32B_B82K)
-    print(feature_extractor.precision)
     clip_l_e32_tensor, clip_l_e32_data = feature_extractor.extract_features(ModelType.VIT_L_14_LAION400M_E32, last_layer=True)
-    print(feature_extractor.precision)
     clip_g_tensor, clip_g_data = feature_extractor.extract_features(ModelLink.VIT_BIGG_14_LAION2B_S39B_B160K)
 
     image_file.as_tensor(dtype=dtype, device=device)
