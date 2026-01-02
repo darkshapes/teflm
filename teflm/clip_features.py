@@ -43,7 +43,7 @@ ModelType = Enum(
 ModelLink = Enum(
     "ModelData",
     {
-        f"{family.replace('-', '_').upper()}_{id.replace('-', '_').upper()}": (data.get("hf_hub"), data.get("url"))
+        f"{family.replace('-', '_').upper()}_{id.replace('-', '_').upper()}": (data.get("hf_hub", "").strip("/"), data.get("url"))
         for family, name in _PRETRAINED.items()
         for id, data in name.items()
         if data.get("hf_hub") or data.get("url")
@@ -51,14 +51,11 @@ ModelLink = Enum(
 )
 
 
-def get_model_and_pretrained(member: ModelType | ModelLink) -> tuple[str, str]:
+def get_model_and_pretrained(member: Enum) -> tuple[str, str]:
     """Return the raw strings for a member.\n
     :param member: Enum member representing a model and its pretrained variant.
     :returns: The model type and pretrained string."""
-    if isinstance(member, ModelLink):
-        return member.value[0], member.value[1]
-    elif isinstance(member, ModelType):
-        return member.value
+    return member.value
 
 
 class CLIPEncoder(nn.Module):
@@ -167,19 +164,19 @@ class CLIPFeatures:
         :param device_name : Target graphics processing device."""
         self._device: str = device_name.value
 
-    def set_model_type(self, model_type: ModelType) -> None:
+    def set_model_type(self, model_type: Enum) -> None:
         """Switch the underlying Open-CLIP model.
         :param model_type: Desired pretrained model and dataset variant."""
         model_name, pretrained = get_model_and_pretrained(model_type)
         self._model_type = model_name
         self._pretrained = pretrained
 
-    def set_model_link(self, model_link: ModelLink) -> None:
+    def set_model_link(self, model_link: Enum) -> None:
         """Switch the path to an Open-CLIP model
         :param model_link: Desired pretrained model and dataset variant."""
         model_link, model_hub = get_model_and_pretrained(model_link)
-        self._model_link = model_link
-        self._model_hub = model_hub
+        self._model_link: str = model_link
+        self._model_hub: str = model_hub
 
     def set_precision(self, precision: PrecisionType) -> None:
         """Change the numeric precision used by the model.
@@ -191,7 +188,7 @@ class CLIPFeatures:
         :param image_paths: One or more image file paths.
         :returns: Extracted image features"""
         if not last_layer:
-            clip_encoder = CLIPEncoder(self._device)
+            clip_encoder = CLIPEncoder(self._device, model=self._model_link)
 
             return clip_encoder.encode_image(image.tensor)
         else:
