@@ -11,7 +11,7 @@ class ImageFile:
 
     def __init__(self) -> None:
         """Initializes an ImageFile instance with a default"""
-        self._default_path = Path(__file__).resolve().parent / "assets" / "DSC_0047.png"
+        self._default_path: Path = Path(__file__).resolve().parent / "assets" / "DSC_0047.png"
         self._default_path.resolve()
         self._default_path.as_posix()
 
@@ -55,3 +55,6 @@ class ImageFile:
     @property
     def image_path(self) -> str:
         return self._image_path
+
+    def set_image_path(self, image) -> None:
+        self._image_path = image
