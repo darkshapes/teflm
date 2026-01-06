@@ -5,7 +5,7 @@
 from torch import Tensor, nn, dtype, float32, device
 
 from tvln.batch import ImageFile
-from tvln.options import DeviceName, FloraModels, OpenClipModels
+from tvln.options import DeviceName, FloraModel, OpenClipModel
 
 
 class FloraEncoder(nn.Module):
@@ -17,7 +17,7 @@ class FloraEncoder(nn.Module):
         """Instantiate the encoder with a specific device and model\n
         :param device: The graphics device to allocate, Default is cpu"""
         super().__init__()
-        self.flora_model, _ = FloraModels.VIT_L_14_LAION2B_S32B_B82K.value  # type: ignore dynamic
+        self.flora_model, _ = FloraModel.VIT_L_14_LAION2B_S32B_B82K.value  # type: ignore dynamic
         self.device = device
 
     def clip_encode_image(self, x: Tensor) -> Tensor:
@@ -78,7 +78,7 @@ class OpenClipEncoder:
 
     def __init__(self, device: str | device = DeviceName.CPU, precision: dtype = float32) -> None:
         super().__init__()
-        self.open_clip_model, self.pretraining = OpenClipModels.VIT_L_14_LAION2B_S32B_B82K.value  # type:ignore
+        self.open_clip_model, self.pretraining = OpenClipModel.VIT_L_14_LAION2B_S32B_B82K.value  # type:ignore
         self.precision: dtype = precision
         self.device = device
 

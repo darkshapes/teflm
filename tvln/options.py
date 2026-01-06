@@ -16,15 +16,25 @@ class DeviceName(str, Enum):
     MPS = "mps"
 
 
-class OpenClipModel:
+class OpenClipModels:
+    """An OpenCLIP model configuration
+    Tuple of (model_type, pretrained)
+    :model_type: str: Name of the model
+    :pretrained: str: Name of the pretraining dataset"""
+
     pass
 
 
-class FloraModel:
+class FloraModels:
+    """A pretrained model for image feature extraction
+    hf_hub: Huggingface Hub URL to the model
+    url: Alternate url to the model
+    Tuple of (hf_hub:str, url:str)"""
+
     pass
 
 
-FloraModels = Enum(
+FloraModel = Enum(
     "FloraModel",
     {
         f"{family.replace('-', '_').upper()}_{id.replace('-', '_').upper()}": (data.get("hf_hub", "").strip("/"), data.get("url"))
@@ -32,10 +42,11 @@ FloraModels = Enum(
         for id, data in name.items()
         if data.get("hf_hub") or data.get("url")
     },
+    module=type(OpenClipModels),
 )
 
 
-OpenClipModels = Enum(
+OpenClipModel = Enum(
     "OpenClipModel",
     {
         # member name → (model_type, pretrained) value
@@ -45,4 +56,5 @@ OpenClipModels = Enum(
         )
         for model, pretrained in list_pretrained()
     },
+    module=type(FloraModels),
 )

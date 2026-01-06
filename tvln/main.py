@@ -7,7 +7,7 @@ import torch
 @torch.no_grad
 def main():
     from tvln.batch import ImageFile
-    from tvln.options import DeviceName, OpenClipModels, FloraModels
+    from tvln.options import DeviceName, OpenClipModel, FloraModel
     from tvln.extract import FeatureExtractor
 
     device = DeviceName.CPU
@@ -21,9 +21,9 @@ def main():
     image_file.as_tensor(device=DeviceName.CPU, dtype=torch.float32)
 
     feature_extractor = FeatureExtractor(image=image_file)
-    clip_l_tensor, clip_l_data = feature_extractor.extract(model=FloraModels.VIT_L_14_LAION2B_S32B_B82K)  # type:ignore cannot access
-    clip_l_e32_tensor, clip_l_e32_data = feature_extractor.extract(model=OpenClipModels.VIT_L_14_LAION400M_E32)  # type:ignore cannot access
-    clip_g_tensor, clip_g_data = feature_extractor.extract(model=FloraModels.VIT_BIGG_14_LAION2B_S39B_B160K)  # type:ignore cannot access
+    clip_l_tensor, clip_l_data = feature_extractor.extract(model=FloraModel.VIT_L_14_LAION2B_S32B_B82K)  # type:ignore cannot access
+    clip_l_e32_tensor, clip_l_e32_data = feature_extractor.extract(model=OpenClipModel.VIT_L_14_LAION400M_E32)  # type:ignore cannot access
+    clip_g_tensor, clip_g_data = feature_extractor.extract(model=FloraModel.VIT_BIGG_14_LAION2B_S39B_B160K)  # type:ignore cannot access
     image_file.as_tensor(device=device, dtype=torch.float32)
     vae_tensor, vae_data = feature_extractor.extract(model="black-forest-labs/FLUX.1-dev")
 
