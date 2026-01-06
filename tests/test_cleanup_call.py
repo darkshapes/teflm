@@ -1,6 +1,6 @@
 import pytest
-from unittest.mock import patch, MagicMock
-from tvln.extract import FeatureExtractor, ImageFile, FloraModels, OpenClipModels
+from unittest.mock import patch
+from tvln.extract import FeatureExtractor, ImageFile
 from tvln.clip_features import FloraEncoder
 import torch
 
